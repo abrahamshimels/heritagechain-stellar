@@ -1,5 +1,6 @@
 # HeritageChain 🔷
 
+
 ## 🌍 Overview
 HeritageChain is a blockchain-powered platform for purchasing verified digital representations of **Ethiopian cultural heritage sites**. It automatically distributes revenue among stakeholders (Treasury, Preservation Fund, and Artists) using Soroban smart contracts on the Stellar network.
 
