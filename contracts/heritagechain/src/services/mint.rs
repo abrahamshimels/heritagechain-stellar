@@ -1,20 +1,29 @@
 use soroban_sdk::{Address, Env, String};
 use crate::types::Collectible;
-use crate::storage::{increment_count, write_collectible};
+use crate::storage::{get_next_id, increment_id, save_collectible};
 
-pub fn mint(env: &Env, admin: &Address, name: String, site: String, price: i128, artist: Address) -> u64 {
+pub fn mint_collectible(
+    env: &Env,
+    admin: Address,
+    name: String,
+    site: String,
+    price: i128,
+    artist: Address,
+) -> u64 {
     admin.require_auth();
 
-    let id = increment_count(env);
+    let id = get_next_id(env);
     let collectible = Collectible {
         id,
         name,
         site,
         price,
         artist,
-        owner: None,
+        owner: admin.clone(), // Admin is the initial owner per requirements
     };
 
-    write_collectible(env, id, &collectible);
+    save_collectible(env, id, &collectible);
+    increment_id(env);
+    
     id
 }

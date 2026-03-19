@@ -1,39 +1,39 @@
 use soroban_sdk::{Address, Env};
-use crate::storage::{read_collectible, read_user_collection, write_collectible, write_user_collection};
-use crate::services::split::execute_split;
+use soroban_sdk::token::Client as TokenClient;
+use crate::storage::{get_collectible, save_collectible, add_to_user, has_collectible};
+use crate::services::split::split_payment;
 
-pub fn purchase(
+pub fn purchase_collectible(
     env: &Env,
-    buyer: &Address,
+    buyer: Address,
     collectible_id: u64,
-    token: &Address,
-    treasury: &Address,
-    site_fund: &Address,
+    token: Address,
+    treasury: Address,
+    site_fund: Address,
 ) {
     buyer.require_auth();
 
-    let mut collectible = read_collectible(env, collectible_id).expect("collectible not found");
-    if collectible.owner.is_some() {
-        panic!("already owned");
+    // 1. Get collectible
+    let mut collectible = get_collectible(env, collectible_id).expect("Collectible not found");
+    
+    // 2. Check if user does NOT already own it (per requirements)
+    if has_collectible(env, buyer.clone(), collectible_id) {
+        panic!("User already owns this collectible");
     }
 
-    // execute payments
-    execute_split(
-        env,
-        token,
-        buyer,
-        collectible.price,
-        treasury,
-        site_fund,
-        &collectible.artist,
-    );
+    // 3. Call split_payment (Pure function)
+    let (treasury_share, site_share, artist_share) = split_payment(collectible.price);
 
-    // Update ownership
-    collectible.owner = Some(buyer.clone());
-    write_collectible(env, collectible_id, &collectible);
+    // 4. Perform token transfers
+    let client = TokenClient::new(env, &token);
+    client.transfer(&buyer, &treasury, &treasury_share);
+    client.transfer(&buyer, &site_fund, &site_share);
+    client.transfer(&buyer, &collectible.artist, &artist_share);
 
-    // Update user collection
-    let mut collection = read_user_collection(env, buyer);
-    collection.push_back(collectible_id);
-    write_user_collection(env, buyer, &collection);
+    // 5. Update ownership
+    collectible.owner = buyer.clone();
+    save_collectible(env, collectible_id, &collectible);
+    
+    // 6. Record in user collection
+    add_to_user(env, buyer, collectible_id);
 }

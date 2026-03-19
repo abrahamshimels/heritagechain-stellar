@@ -8,12 +8,12 @@ pub struct Collectible {
     pub site: String,
     pub price: i128,
     pub artist: Address,
-    pub owner: Option<Address>,
+    pub owner: Address,
 }
 
 #[contracttype]
 pub enum DataKey {
     Collectible(u64),
     UserCollection(Address),
-    CollectibleCount,
+    Count,
 }

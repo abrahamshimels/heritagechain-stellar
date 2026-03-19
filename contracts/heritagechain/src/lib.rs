@@ -1,8 +1,11 @@
 #![no_std]
 
-mod types;
-mod storage;
-mod services;
-mod contract;
+pub mod types;
+pub mod storage;
+pub mod services;
+pub mod contract;
 
-pub use contract::*;
+pub use crate::contract::*;
+
+#[cfg(test)]
+mod test;
