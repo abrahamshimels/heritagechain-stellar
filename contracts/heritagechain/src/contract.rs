@@ -1,4 +1,4 @@
-use soroban_sdk::{contract, contractimpl, Address, Env, String, Vec};
+use soroban_sdk::{contract, contractimpl, Address, Env, Vec};
 use crate::types::Collectible;
 use crate::storage::{get_collectible, get_user_collection, get_count};
 use crate::services::mint::mint_collectible as mint;
@@ -12,12 +12,12 @@ impl HeritageChain {
     pub fn mint_collectible(
         env: Env,
         admin: Address,
-        name: String,
-        site: String,
-        price: i128,
         artist: Address,
-    ) -> u64 {
-        mint(&env, admin, name, site, price, artist)
+        site: Address,
+        price: i128,
+        total_supply: u32,
+    ) -> u32 {
+        mint(env, admin, artist, site, price, total_supply).unwrap()
     }
 
     pub fn purchase_collectible(
