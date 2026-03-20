@@ -16,10 +16,13 @@ pub fn mint_collectible(
     let collectible = Collectible {
         id,
         name,
+        description: String::from_str(env, ""),
         site,
+        edition: String::from_str(env, ""),
         price,
         artist,
         owner: admin.clone(), // Admin is the initial owner per requirements
+        is_sold: false,
     };
 
     save_collectible(env, id, &collectible);
