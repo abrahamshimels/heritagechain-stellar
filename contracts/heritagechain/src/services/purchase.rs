@@ -22,7 +22,10 @@ pub fn purchase_collectible(
     }
 
     // 3. Call split_payment (Pure function)
-    let (treasury_share, site_share, artist_share) = split_payment(collectible.price);
+   let split = split_payment(collectible.price);
+let treasury_share = split.treasury_amount;
+let site_share = split.site_fund_amount;
+let artist_share = split.artist_amount;
 
     // 4. Perform token transfers
     let client = TokenClient::new(env, &token);
