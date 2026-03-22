@@ -29,16 +29,16 @@ pub fn has_collectible(env: &Env, user: Address, id: u64) -> bool {
 }
 
 pub fn get_next_id(env: &Env) -> u64 {
-    env.storage().instance().get(&DataKey::Count).unwrap_or(0) + 1
+    env.storage().instance().get(&DataKey::CollectibleCount).unwrap_or(0) + 1
 }
 
 pub fn increment_id(env: &Env) {
     let next = get_next_id(env);
-    env.storage().instance().set(&DataKey::Count, &next);
+    env.storage().instance().set(&DataKey::CollectibleCount, &next);
 }
 
 pub fn get_count(env: &Env) -> u64 {
-    env.storage().instance().get(&DataKey::Count).unwrap_or(0)
+    env.storage().instance().get(&DataKey::CollectibleCount).unwrap_or(0)
 }
 
 pub fn get_user_collection(env: &Env, user: Address) -> Vec<u64> {
